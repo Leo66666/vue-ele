@@ -49,20 +49,61 @@ export default {
             }
           }
         }
-      }
+      },
+      codeData: Object.assign({}, this.formAttr, {
+        formDesc: this.formDesc
+      })
     };
   },
-  computed: {
-    codeData() {
-      return Object.assign({}, this.formAttr, {
-        formDesc: this.formDesc
-      });
-    }
-  },
+
   methods: {
     handleCopyData() {
       copy(serialize(this.codeData, { space: 2 }));
       this.$message.success("复制成功!");
+    },
+    // 对数据进行转义 转成su-form的配置项
+    setNewConfig(data) {
+      let configList = [];
+      console.log(data);
+      Object.keys(Object.assign({}, data)).forEach(key => {
+        let item = data[key];
+        item.field = key;
+        item.span = item.layout;
+        delete item.layout;
+
+        // 设置必填项
+        if (this.checkProperty(item, "required")) {
+          item.validate = "required";
+          item.rules = [
+            { required: true, message: `请输入${item.label}!`, trigger: "blur" }
+          ];
+          delete item.required;
+        }
+        // 设置组件属性配置
+        if (this.checkProperty(item, "attrs")) {
+          item.maxlength = item.attrs.maxlength;
+          item.minlength = item.attrs.minlength;
+          item.placeholder = item.attrs.placeholder;
+          item.type = item.attrs.type || "input";
+          item.min = Number(item.attrs.min) || null;
+          item.max = Number(item.attrs.max) || null;
+          // delete item.attrs;
+        }
+        configList.push(item);
+      });
+      this.codeData = configList;
+    },
+    //检查是否包含属性
+    checkProperty(data, key) {
+      return Object.prototype.hasOwnProperty.call(data, key);
+    }
+  },
+  watch: {
+    formDesc: {
+      handler(newVal) {
+        this.setNewConfig(newVal);
+      },
+      immediate: true
     }
   }
 };

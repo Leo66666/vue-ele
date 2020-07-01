@@ -86,7 +86,7 @@ export default {
           type: "input",
           label: "标签"
         },
-        span: {
+        layout: {
           type: "slider",
           label: "宽度",
           attrs: {
