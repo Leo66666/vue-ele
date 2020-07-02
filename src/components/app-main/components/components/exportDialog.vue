@@ -64,13 +64,11 @@ export default {
     // 对数据进行转义 转成su-form的配置项
     setNewConfig(data) {
       let configList = [];
-      console.log(data);
       Object.keys(Object.assign({}, data)).forEach(key => {
         let item = data[key];
         item.field = key;
         item.span = item.layout;
         delete item.layout;
-
         // 设置必填项
         if (this.checkProperty(item, "required")) {
           item.validate = "required";
@@ -84,10 +82,19 @@ export default {
           item.maxlength = item.attrs.maxlength;
           item.minlength = item.attrs.minlength;
           item.placeholder = item.attrs.placeholder;
-          item.type = item.attrs.type || "input";
+          item.type = item.attrs.type || item.type || "input";
           item.min = Number(item.attrs.min) || null;
           item.max = Number(item.attrs.max) || null;
-          // delete item.attrs;
+          item.precision = Number(item.attrs.precision) || 0;
+          delete item.attrs;
+        }
+
+        // 设置select值
+        if (this.checkProperty(item, "options")) {
+          item.options.forEach(obj => {
+            obj.label = obj.text;
+            delete obj.text;
+          });
         }
         configList.push(item);
       });

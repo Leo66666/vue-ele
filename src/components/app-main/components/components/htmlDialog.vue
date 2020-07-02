@@ -47,6 +47,12 @@ export default {
       default: () => ({})
     }
   },
+  data: function() {
+    return {
+      formSuFormItem: [],
+      formSuFormData: {}
+    };
+  },
   computed: {
     ...mapGetters(["currentForm"]),
     // 渲染模板
@@ -77,7 +83,8 @@ export default {
       };
       return ejs.render(tpl, {
         formAttr: getFormAttrObj(this.formAttr),
-        formDesc: getFormDescStr(this.formDesc)
+        formDesc: getFormDescStr(this.formSuFormItem),
+        formData: getFormDescStr(this.formSuFormData)
       });
     },
     fileURL() {
@@ -89,6 +96,64 @@ export default {
     handleCopyHtml() {
       copy(this.codeHtml);
       this.$message.success("复制成功!");
+    },
+    // 对数据进行转义 转成su-form的配置项
+    setNewConfig(data) {
+      let configList = [];
+      Object.keys(Object.assign({}, data)).forEach(key => {
+        let item = data[key];
+        item.field = key;
+        item.span = item.layout;
+        delete item.layout;
+        // 设置必填项
+        if (this.checkProperty(item, "required")) {
+          item.validate = "required";
+          item.rules = [
+            { required: true, message: `请输入${item.label}!`, trigger: "blur" }
+          ];
+          delete item.required;
+        }
+        // 设置组件属性配置
+        if (this.checkProperty(item, "attrs")) {
+          item.maxlength = item.attrs.maxlength;
+          item.minlength = item.attrs.minlength;
+          item.placeholder = item.attrs.placeholder;
+          item.type = item.attrs.type || item.type || "input";
+          item.min = Number(item.attrs.min) || null;
+          item.max = Number(item.attrs.max) || null;
+          item.precision = Number(item.attrs.precision) || 0;
+          delete item.attrs;
+        }
+
+        // 设置select值
+        if (this.checkProperty(item, "options")) {
+          item.options.forEach(obj => {
+            obj.label = obj.text;
+            delete obj.text;
+          });
+        }
+        configList.push(item);
+      });
+      this.formSuFormItem = configList;
+      this.setFormData(this.formSuFormItem);
+    },
+    setFormData(data) {
+      data.forEach(item => {
+        this.formSuFormData[item.field] = undefined;
+      });
+      console.log(this.formSuFormData);
+    },
+    //检查是否包含属性
+    checkProperty(data, key) {
+      return Object.prototype.hasOwnProperty.call(data, key);
+    }
+  },
+  watch: {
+    formDesc: {
+      handler(newVal) {
+        this.setNewConfig(newVal);
+      },
+      immediate: true
     }
   }
 };

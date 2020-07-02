@@ -1,18 +1,18 @@
 <template>
-  <ele-form<% for(let item of formAttr) { %>
-    <%- item.key %>="<%= item.value %>"<% } %>
-    :formDesc="formDesc"
-    v-model="formData"
-    :request-fn="handleRequest"
-    @request-success="handleRequestSuccess"
-  />
+  <su-form 
+    ref="form"
+    :items="formDesc"
+    :model="formData"
+    :labelPosition="labelPosition"
+    :disabled="false">
+  </su-form>
 </template>
 
 <script>
 export default {
   data() {
     return {
-      formData: {},
+      formData: <%- formData %>,
       formDesc: <%- formDesc %>
     };
   },
