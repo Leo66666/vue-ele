@@ -8,7 +8,7 @@
 
 ## 介绍
 
-vue-su-form-generator 是专为 [sunrtui](https://github.com/dream2023/vue-ele-form) 开发的可视化表单设计工具(https://marketplace.visualstudio.com/items?itemName=dream2023.fgen-for-vscode)、[cli 本地启动](https://github.com/dream2023/fgen-cli)、[在线设计](https://dream2023.gitee.io/vue-ele-form-generator/)多种方式, 让表单开发的效率更上一层楼!
+vue-su-form-generator 是专为 [sunrtui]开发的可视化表单设计工具、[cli 本地启动]、[在线设计]多种方式, 让表单开发的效率更上一层楼!
 
 ## 注意
 注意，此设计器不是独立存在的，是依托于 [vue-ele-form](https://github.com/dream2023/vue-ele-form),在使用前请务必阅读 [vue-ele-form 的文档](https://www.yuque.com/chaojie-vjiel/vbwzgu/xl46cd)。
